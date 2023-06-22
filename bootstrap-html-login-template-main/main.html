@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>main</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+    <link rel="stylesheet"  href="css/main.css">
+</head>
+<body>
+    <header>
+        学生信息管理系统
+        <div class="user-info">
+            欢迎,&nbsp;<span id="username-info">username</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="font-size: 13px" id="layout">注销</span>
+        </div>
+    </header>
+    <div class="container header">
+        <div class="row">
+        <div class="col">
+      <div class="input-group mb-3">
+  <input type="text" id="inputUsername" class="form-control" placeholder="用户名" aria-label="请输入查找的用户名" aria-describedby="button-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" id="selectUsername">查找</button>
+  </div>
+</div>
+    </div>
+    <div class="col">
+      <div class="input-group mb-3">
+  <input type="text" id="inputAddress" class="form-control" placeholder="地区" aria-label="请输入查找的地区" aria-describedby="button-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" id="selectAddress">查找</button>
+  </div>
+</div>
+    </div>
+    <div class="col">
+      <div class="input-group mb-3">
+  <input type="text" id="inputSpecialize" class="form-control" placeholder="专业" aria-label="请输入查找的专业" aria-describedby="button-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" id="selectSpecialize">查找</button>
+  </div>
+</div>
+    </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-6">
+      <button type="button" id="selectAll" class="btn btn-success">查询全部</button>
+    </div>
+     <div class="col-6">
+         <div class="row justify-content-end" id="admin_permission">
+            <div class="col">
+                <button type="button" id="addContact" class="btn btn-primary">增加联系人</button>
+            </div>
+            <div class="col">
+                <button type="button" id="updateContact" class="btn btn-warning">修改联系人</button>
+            </div>
+            <div class="col">
+                <button type="button" id="delContact" class="btn btn-secondary">删除联系人</button>
+            </div>
+         </div>
+     </div>
+  </div>
+
+    </div>
+
+<div class="container-fluid">
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col" class="fisrt-th">操作</th>
+      <th scope="col">姓名</th>
+      <th scope="col">性别</th>
+      <th scope="col">联系方式</th>
+      <th scope="col">地址</th>
+      <th scope="col">出生日期</th>
+      <th scope="col">学院</th>
+      <th scope="col">专业</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-end">
+    <li class="page-item"><a class="page-link text-muted" >Previous</a></li>
+    <li class="page-item"><a class="page-link text-muted" >1</a></li>
+    <li class="page-item"><a class="page-link text-muted" >2</a></li>
+    <li class="page-item"><a class="page-link text-muted" >3</a></li>
+    <li class="page-item"><a class="page-link text-muted" >Next</a></li>
+  </ul>
+</nav>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.0.js" ></script>
+<script src="js/utils.js"></script>
+<script src="js/main.js"></script>
+<script>
+    $(function () {
+        var url = location.search
+        params = retainReq(url)
+        if(!params.username) {
+            username = localStorage.getItem('userName')
+            params['username'] = username
+        }
+        if(!params['username']) location = 'login.html'
+        $("#username-info").html(params['username'])
+        $.ajax({
+            method: "get",
+            url: "http://localhost/permission/",
+            data: params,
+            async: true,
+            success: (res) => {
+                res = JSON.parse(res)
+                if(res.status == 200 ){
+                    // identity 0代表普通用户 1代表管理员
+                    if(!res.data.identity) {
+                        $("#admin_permission").remove()
+                        $(".fisrt-th").html("序号")
+                        localStorage.setItem("permission", "user")
+                    }else {
+                        localStorage.setItem("permission", "admin")
+                    }
+                }else if (res.status == 404 ) {
+                    location = 'login.html'
+                }else {
+                    alert(res.msg)
+                }
+            }
+        })
+        $.ajax({
+            method: "get",
+            url: "http://localhost/main/",
+            async: true,
+            success: (res) => {
+                res = JSON.parse(res)
+                if(res.status== 200) {
+                    for(var i = 0; i < res.data.length; i++ ) {
+                        $("tbody").append(addTar(res.data[i], i + 1))
+                    }
+                }
+            }
+        })
+    })
+</script>
+</html>

@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+header {
+    position: relative;
+    background-color: #7365dc;
+    height: 100px;
+    width: 100%;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 100px;
+    color: #f5f5f5;
+    cursor: default;
+}
+header .ret_btn {
+    position: absolute;
+    bottom: -30px;
+    color: #fff;
+    left: 10px;
+    font-size: 14px;
+    font-weight: normal;
+    cursor: pointer;
+}
+header .user-info {
+    position: absolute;
+    bottom: -30px;
+    right: 40px;
+    font-size: 15px;
+    color: #eeeeee;
+    font-weight: normal;
+}
+body {
+    background-image: url("../img/p_big3.jpg");
+    background-size: cover;
+}
+.mask {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, .5);
+    z-index: 1;
+}
+#app {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 450px;
+    height: auto;
+    padding: 40px;
+    padding-bottom: 20px;
+    z-index: 999;
+}
+form div {
+    display: flex;
+    margin-bottom: 10px;
+}
+form div label {
+    display: inline-block;
+    margin: 0;
+    margin-right: 10px;
+    line-height: 37px;
+}
+form div input ,
+.specialize_sel {
+    flex: 1;
+    outline: none;
+    padding: 1px;
+    padding-left: 5px;
+    box-sizing: content-box;!important;
+}
+.btn-manage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+form div .add_btn {
+    background-color: #7365dc;
+    margin-right: 15px;
+}

@@ -1,0 +1,42 @@
+.header {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+table {
+    text-align: center;
+    font-size: 14px;
+}
+.ml-2 {
+    margin-left: 4px;
+}
+.contact-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    height: 400px;
+    background-color: #f5f5f5;
+}
+header {
+    position: relative;
+    background-color: #7365dc;
+    height: 100px;
+    width: 100%;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 100px;
+    color: #f5f5f5;
+}
+header .user-info {
+    position: absolute;
+    bottom: -30px;
+    right: 40px;
+    font-size: 15px;
+    color: #eeeeee;
+    font-weight: normal;
+}
+#layout {
+    cursor: pointer;
+}

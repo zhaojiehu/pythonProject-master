@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改联系人</title>
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="css/add.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" ></script>
+    <script src="js/utils.js"></script>
+</head>
+<body>
+     <header>
+        修改联系人
+        <div class="user-info">
+            欢迎,&nbsp;<span id="username-info">username</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="font-size: 13px" id="layout">注销</span>
+        </div>
+         <span class="ret_btn">返回</span>
+    </header>
+    <div class="mask">
+    </div>
+    <div id="app" class="border shadow bg-white rounded">
+        <form>
+            <div>
+                <label for="contact_name">联系人:</label>
+                <input type="text" id="contact_name" v-model="name">
+            </div>
+            <div>
+                <label for="tel">联系号码:</label>
+                <input type="text" id="tel" v-model="tel">
+            </div>
+            <div>
+                <label>性别:</label>
+                <label for="male">
+                     <input type="radio" id="male" name="sex" value="男" v-model="sex">男
+                </label>
+                <label for="female">
+                     <input type="radio" id="female" name="sex" value="女" v-model="sex">女
+                </label>
+            </div>
+            <div>
+                <label for="address">地址:</label>
+                <input type="text" id="address" v-model="address">
+            </div>
+             <div>
+                <label for="birth">出日日期:</label>
+                <input type="text" id="birth" placeholder="请输入日期格式为XX-XX-XX" v-model="birth">
+            </div>
+            <div>
+                <label for="specialize">专业:</label>
+                <select v-model="specialize" id="specialize" class="specialize_sel" @change="change_hangle">
+                    <template v-for="(item, index) in specialize_list">
+                        <option>{{ item }}</option>
+                    </template>
+                </select>
+            </div>
+            <div>
+                <label for="acodemy">学院:</label>
+                <input id="academy" type="text" v-model="academy">
+            </div>
+            <div class="btn-manage">
+                <button type="button" class="btn btn-secondary btn-block add_btn" @click="update_contact">修改</button>
+            </div>
+        </form>
+    </div>
+     <script>
+         const { createApp } = Vue
+         createApp({
+            data() {
+                return {
+                    name: "",
+                    tel: "",
+                    sex: "",
+                    address: "",
+                    birth: "",
+                    academy: "",
+                    specialize: "",
+                    specialize_id: "",
+                    specialize_list: [
+                        "计算机科学与技术",
+                        "软件工程",
+                        "网络安全",
+                        "网络工程",
+                        "社会工作",
+                        "法律与社会",
+                        "大数据分析",
+                        "服装设计",
+                        "网络与新媒体",
+                        "艺术鉴赏"
+                    ]
+                }
+            },
+            created() {
+                const url = location.search
+                let params = retainReq(url)
+                const name = params['name']
+
+                if(!name) {
+                    location.href = 'main.html'
+                }
+                axios.get("http://127.0.0.1/select/name/?keywords=" + name)
+                    .then((res) => {
+                        const {status, data} = res
+                        if(status == 200)  {
+                            const [ contact ] = data.data
+                            this.name = contact.name
+                            this.sex = contact.sex
+                            this.tel = contact.tel
+                            this.address = contact.tel
+                            this.academy = contact.academy
+                            this.specialize = contact.specialize
+                            this.specialize_id = contact.specialize_id
+                            const birth = contact.birth.split(".").join("-")
+                            this.birth = birth
+                        }
+                    })
+            },
+            methods: {
+                async change_hangle() {
+                    await axios.get("http://localhost/getSpecialize/?specialize="+ this.specialize)
+                        .then((res) => {
+                            const { status, data } = res
+                            if(status == 200 ){
+                                this.academy = data.data.academy
+                                this.specialize_id = data.data.specialize_id
+                            }
+                        })
+                },
+                reset_contact() {
+                    this.name = ""
+                    this.tel = ""
+                    this.sex = ""
+                    this.specialize_id = ""
+                    this.academy = ""
+                    this.specialize = ""
+                    this.address = ""
+                    this.birth = ""
+                },
+                async update_contact() {
+                    if(!this.name || !this.tel || !this.sex || !this.address || !this.birth || !this.academy || !this.specialize) {
+                        return confirm("填写信息不能为空")
+                    }
+                    const contact = {
+                        name: this.name,
+                        sex: this.sex,
+                        tel: this.tel,
+                        birth: this.birth,
+                        address: this.address,
+                        specialize_id: this.specialize_id
+                    }
+                    const data = JSON.stringify(contact)
+                    axios.post("http://localhost/updateContact/", data)
+                        .then((res) => {
+                            const {status, data} = res
+                            if(status == 200 ) {
+                                confirm(data.msg)
+                                this.reset_contact()
+                            }
+                        })
+                }
+            }
+         }).mount('#app')
+     </script>
+
+    <script>
+        $(function () {
+            const username = localStorage.getItem("userName")
+            if (!username) location.href = "login.html"
+            $("#username-info").html(username)
+            $("#layout").on("click", (e) => {
+            localStorage.removeItem("userName")
+            localStorage.removeItem("passWord")
+            localStorage.removeItem("check2")
+            localStorage.removeItem("check1")
+            localStorage.removeItem('permission')
+            location = "login.html"
+        })
+            $(".ret_btn").on('click', function () {
+                location.href = 'main.html'
+            })
+            $(".mask").height($(window).height()-100)
+
+            $(".ret_btn").click(function () {
+                location.href = "main.html"
+            })
+        })
+    </script>
+</body>
+</html>
